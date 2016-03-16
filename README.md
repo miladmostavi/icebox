@@ -17,17 +17,6 @@ internet-connected computer all security guarantees go out the
 window. Always make sure to close the browser when you're done with
 your session.
 
-## Installation
-
-```
-git clone https://github.com/ConsenSys/icebox.git
-cd icebox
-sudo npm install
-npm run build
-```
-
-Now open `dist/icebox.html` in a browser.
-
 ## Installation on an airgapped computer
 
 Put the `dist` folder and its files on a USB stick and transfer the
@@ -46,8 +35,8 @@ Now reset the network settings on your iOS device and put it in
 airplane mode. Your iOS device is now airgapped and you can start
 using Icebox. For security, never connect the iOS device to the
 internet after you have entered your seed into it. If you want to stop
-using it as a cold wallet do a hard reset before connecting it to the
-network again.
+using it as a cold wallet do a hard reset and erase all data before
+connecting it to the network again.
 
 ## Usage
 
@@ -94,10 +83,18 @@ find the nonce of an address using a block explorer like
 Once you hit "Create Transaction" a signed transaction is created and
 displayed. You can now take this signed transaction and transmit it to
 the network, for instance using `web3.eth.sendRawTransaction(tx)` in
-the geth console, or using the bundled website `sendtx.html`. If
+the geth console, or using a website such as
+[http://badmofo.github.io/ethsend/](http://badmofo.github.io/ethsend/). If
 you're using an airgapped computer you can use a USB stick to transfer
 the signed transaction out, or if you're using an iOS device you can
 use the Workflow App which will display the transaction as a QR code.
+
+## Save/Load Encrypted wallet
+
+You can save the encrypted wallet by clicking on "Save Wallet". You
+can then copy the JSON text in the text box and save it to a file. To
+load it again, paste it into the text box under "Load Encrypted
+Wallet" and hit "Load Wallet".
 
 ## Workflow App
 

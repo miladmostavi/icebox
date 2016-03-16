@@ -18,13 +18,6 @@
           var numAddr = parseInt(document.getElementById('numAddr').value)
           global_keystore.generateNewAddress(pwDerivedKey, numAddr);
 
-          var addresses = global_keystore.getAddresses();
-
-          document.getElementById('sendFrom').innerHTML = ''
-          for (var i=0; i<addresses.length; ++i) {
-            document.getElementById('sendFrom').innerHTML += '<option value="' + addresses[i] + '">' + addresses[i] + '</option>'
-          }
-
           showAddresses();
           
         })
@@ -35,6 +28,7 @@
         document.getElementById('addr').innerHTML = 'Retrieving addresses...'
 
         var addrString = ''
+        document.getElementById('sendFrom').innerHTML = ''
         document.getElementById('addr').innerHTML = ''
         for (var i=0; i<addresses.length; ++i) {
           document.getElementById('addr').innerHTML += '<div>' + addresses[i] + '</div>'
@@ -49,6 +43,13 @@
         // Add link to Workflow app
         var workflowURL = 'workflow://run-workflow?name=AddressQR&input=text&text='
         document.getElementById('workflowAddr').innerHTML = '<a href="' + workflowURL + addrString + '">Address QR Codes (Workflow App)</a>';
+
+        // Add the 'sendFrom' modal
+        document.getElementById('sendFrom').innerHTML = ''
+        for (var i=0; i<addresses.length; ++i) {
+          document.getElementById('sendFrom').innerHTML += '<option value="' + addresses[i] + '">' + addresses[i] + '</option>'
+        }
+
       }
 
       function setSeed() {
@@ -103,7 +104,7 @@
         var value = parseFloat(valueEth)*1.0e18
         var nonce = parseInt(document.getElementById('nonce').value)
         var gasPrice = parseInt(document.getElementById('gasPrice').value)
-        var gas = 30000
+        var gas = 21000
         var rawUnsignedTx = lightwallet.txutils.valueTx({to: toAddr, value: value, gasPrice: gasPrice, gasLimit: gas, nonce: nonce})
 
         lightwallet.keystore.deriveKeyFromPassword(password, function(err, pwDerivedKey) {
@@ -114,13 +115,26 @@
           var workflowURL = 'workflow://run-workflow?name=TransactionQR&input=text&text='
           document.getElementById('workflowTx').innerHTML = '<a href="' + workflowURL + rawSignedTx + '">Transaction QR Code (Workflow App)</a>';
         })
+
+      }
+
+      function saveWallet() {
+        var serialized = global_keystore.serialize();
+        document.getElementById('savedWallet').value = serialized;
+      }
+
+      function loadWallet() {
+        var serialized = document.getElementById('loadedWallet').value;
+        global_keystore = lightwallet.keystore.deserialize(serialized);
+        showAddresses();
+        alert('Wallet Loaded.');
       }
 
     </script>
     <h1>icebox</h1>
     <h2>New Wallet</h2>
     <div><input type="text" id="userEntropy" placeholder="Type random text to generate entropy" size="80"></input><button onclick="newWallet()">Create New Wallet</button></div>
-    <h2>Restore Wallet</h2>
+    <h2>Restore Wallet From Seed</h2>
     <div><input type="text" id="seed" value="" size="80"></input><button onclick="setSeed()">Restore wallet from Seed</button></div>
     <h2>Show Addresses</h2>
     <div>Show <input type="text" id="numAddr" size="5" value="3"></input> more address(es) <button onclick="newAddresses('')">Show</button></div>
@@ -131,12 +145,18 @@
     <div>To: <input type="text" size="40" id="sendTo"></input></div>
     <div>Ether: <input type="text" id="sendValueAmount"></div>
     <div>Nonce: <input type="text" id="nonce"></div>
-    <div>Gas Price<input type="text" id="gasPrice" value=100000000000></div>
+    <div>Gas Price<input type="text" id="gasPrice" value=20000000000></div>
     <div><button onclick="sendEth()">Create Transaction</button></div>
     <h3>Signed Transaction</h3>
     <div><textarea id='rawSignedTx' rows=6 cols=40></textarea></div>
     <div id='workflowTx'></div>
     <h2>Show Seed</h2>
     <button onclick="showSeed()">Show Seed</button>
+    <h2>Save Encrypted Wallet</h2>
+    <div><textarea id='savedWallet' rows=6 cols=40></textarea></div>
+    <button onclick="saveWallet()">Save Wallet</button>
+    <h2>Load Encrypted Wallet</h2>
+    <div><textarea id='loadedWallet' rows=6 cols=40></textarea></div>
+    <button onclick="loadWallet()">Load Wallet</button>
   </body>
 </html>

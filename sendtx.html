@@ -11,8 +11,8 @@
         var web3prov = new web3.providers.HttpProvider('http://localhost:8545');
         web3.setProvider(web3prov);
         var rawtx = document.getElementById('rawSignedTx').value;
-        web3.eth.sendRawTransaction(rawtx, function () {
-          document.getElementById('confirmation').innerHTML = "Transaction sent!";
+        web3.eth.sendRawTransaction(rawtx, function (tx) {
+          document.getElementById('confirmation').innerHTML = "Transaction submitted to network. TxID: " + tx;
         });
       }
 
