@@ -1,6 +1,6 @@
 {
   "name": "icebox",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "description": "Lightwallet-powered cold storage solution",
   "repository" : {
     "type" : "git",
@@ -16,7 +16,7 @@
     "build": "cp node_modules/eth-lightwallet/dist/lightwallet.min.js dist/lightwallet.min.js && cp icebox.html dist/icebox.html"
   },
   "dependencies": {
-    "eth-lightwallet": "2.2.2",
+    "eth-lightwallet": "2.3.3",
     "web3" : "0.15.1"
   }
 }

@@ -2,6 +2,10 @@
 
 Lightwallet-powered cold storage solution.
 
+## Security advisory
+
+Please make sure to update to version 0.2.2. Previous versions contained a bug that could generate addresses that were unrelated to the HD seed if the wrong password was entered when generating new addresses. This could lead to loss of funds.
+
 ## Introduction
 
 Icebox is a simple Ether cold storage solution based on
