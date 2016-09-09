@@ -12,15 +12,20 @@
         
         if (password == '') {
           password = prompt('Enter password to retrieve addresses', '');
+          if(! password) { return false; }
         }
 
-        lightwallet.keystore.deriveKeyFromPassword(password, function(err, pwDerivedKey) {
+        global_keystore.keyFromPassword(password, function(err, pwDerivedKey) {
+          if(! global_keystore.isDerivedKeyCorrect(pwDerivedKey)) {
+            alert('Wrong password');
+            return newAddresses('');
+          }
+          
           var numAddr = parseInt(document.getElementById('numAddr').value)
           global_keystore.generateNewAddress(pwDerivedKey, numAddr);
 
           showAddresses();
-          
-        })
+        });
       }
 
       function showAddresses() {
@@ -55,17 +60,18 @@
       function setSeed() {
 
         var password = prompt('Enter password to encrypt your seed for this session', '');
+        if(! password) { return false; }
 
-        lightwallet.keystore.deriveKeyFromPassword(password, function(err, pwDerivedKey) {
-          global_keystore = new lightwallet.keystore(
-            document.getElementById('seed').value, 
-            pwDerivedKey);
-
-          document.getElementById('seed').value = ''
-          
+        var randomSeed = document.getElementById('seed').value;
+        
+        lightwallet.keystore.createVault({
+          password: password,
+          seedPhrase: randomSeed
+        }, function(err, ks) {
+          window.global_keystore = ks;
           newAddresses(password);
-        })
-
+          document.getElementById('seed').value = '';
+        });
       }
 
       function newWallet() {
@@ -77,20 +83,27 @@
           '". Please write it down on paper, you will need it to access your wallet. Do not let anyone see this seed or they can take your Ether. Please chooses a password to encrypt your wallet for this session.'
 
         var password = prompt(infoString, '');
-        lightwallet.keystore.deriveKeyFromPassword(password, function(err, pwDerivedKey) {
-          global_keystore = new lightwallet.keystore(
-            randomSeed,
-            pwDerivedKey);
-          
-          newAddresses(password);
-          showAddresses();
-        })
+        if(! password) { return false; }
 
+        lightwallet.keystore.createVault({
+          password: password,
+          seedPhrase: randomSeed
+        }, function(err, ks) {
+          window.global_keystore = ks;
+          newAddresses(password);
+        });
       }
 
       function showSeed() {
         var password = prompt('Enter your password to show your seed.', '');
-        lightwallet.keystore.deriveKeyFromPassword(password, function(err, pwDerivedKey) {
+        if(! password) { return false; }
+
+        global_keystore.keyFromPassword(password, function(err, pwDerivedKey) {
+          if(! global_keystore.isDerivedKeyCorrect(pwDerivedKey)) {
+            alert('Wrong password');
+            return showSeed();
+          }
+
           var seed = global_keystore.getSeed(pwDerivedKey);
           alert('Your seed is: "' + seed + '". Please write it down.');
         })
@@ -98,6 +111,8 @@
 
       function sendEth() {
         var password = prompt('Enter password to create and sign transaction', '');
+        if(! password) { return false; }
+
         var fromAddr = document.getElementById('sendFrom').value
         var toAddr = document.getElementById('sendTo').value
         var valueEth = document.getElementById('sendValueAmount').value
@@ -107,7 +122,12 @@
         var gas = 21000
         var rawUnsignedTx = lightwallet.txutils.valueTx({to: toAddr, value: value, gasPrice: gasPrice, gasLimit: gas, nonce: nonce})
 
-        lightwallet.keystore.deriveKeyFromPassword(password, function(err, pwDerivedKey) {
+        global_keystore.keyFromPassword(password, function(err, pwDerivedKey) {
+          if(! global_keystore.isDerivedKeyCorrect(pwDerivedKey)) {
+            alert('Wrong password');
+            return sendEth();
+          }
+
           var rawSignedTx = lightwallet.signing.signTx(global_keystore, pwDerivedKey, rawUnsignedTx, fromAddr)
           document.getElementById('rawSignedTx').value = rawSignedTx
 
