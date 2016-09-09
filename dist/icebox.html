@@ -70,6 +70,7 @@
         }, function(err, ks) {
           window.global_keystore = ks;
           newAddresses(password);
+          document.getElementById('seed').value = '';
         });
       }
 
