@@ -70,7 +70,6 @@
         }, function(err, ks) {
           window.global_keystore = ks;
           newAddresses(password);
-          showAddresses();
         });
       }
 
@@ -91,14 +90,13 @@
         }, function(err, ks) {
           window.global_keystore = ks;
           newAddresses(password);
-          showAddresses();
         });
       }
 
       function showSeed() {
         var password = prompt('Enter your password to show your seed.', '');
         if(! password) { return false; }
-        
+
         global_keystore.keyFromPassword(password, function(err, pwDerivedKey) {
           if(! global_keystore.isDerivedKeyCorrect(pwDerivedKey)) {
             alert('Wrong password');
